@@ -1,21 +1,84 @@
-name: CI for project
+name: Autotests
+run-name: Test ${{ github.event.inputs.ENV }} | ${{ github.event.inputs.MARKER }} | ${{ github.event.inputs.THREADS }} threads
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      ENV:
+        description: 'окружение: dev/DEV'
+        required: true
+        type: choice
+        options: [ dev, qa, prod ]
+
+      BROWSER:
+        description: 'выберите браузер'
+        required: true
+        default: 'chromium'
+        type: choice
+        options:
+          - chromium
+          - firefox
+          - webkit
+      MARKER:
+        description: 'маркеры тестов'
+        required: true
+        default: 'smoke'
+        type: choice
+        options:
+          - smoke
+          - regress
+          - uat
+          - api
+      THREADS:
+        description: 'параллельные потоки'
+        required: true
+        default: '1'
+        type: choice
+        options:
+          - 1
+          - 2
+          - 3
 
 jobs:
-  hello-world:
+  tests:
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.ENV }}
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-    - name: Say Hello
-      run: echo "Hello, GitHub Actions! This is my first workflow!"
+      - name: Prepare Allure environment
+        run: |
+          mkdir -p allure-results
+          echo "Branch=${{ github.ref_name }}" > allure-results/environment.properties
+          echo "Commit=${{ github.sha }}" >> allure-results/environment.properties
+          echo "Browser=${{ github.event.inputs.BROWSER }}" >> allure-results/environment.properties
+          echo "Stage=${{ github.event.inputs.ENV }}" >> allure-results/environment.properties
 
-    - name: Show date
-      run: date
+      - name: Build and run tests
+        env:
+          BROWSER: ${{ github.event.inputs.BROWSER }}
+          MARKER: ${{ github.event.inputs.MARKER }}
+          THREADS: ${{ github.event.inputs.THREADS }}
+        run: |
+          docker build -t ui-tests:latest -f Dockerfile .
+          docker run --rm \
+            -e BROWSER=$BROWSER \
+            -e MARKER=$MARKER \
+            -e THREADS=$THREADS \
+            -v $(pwd)/allure-results:/usr/workspace/allure-results \
+            ui-tests:latest
+
+      - name: Generate Allure report
+        if: always()
+        run: |
+          docker run --rm -v $(pwd):/workspace mcr.microsoft.com/playwright/python:v1.47.0-noble \
+            sh -c "pip install allure-pytest allure-commandline && cd /workspace && allure generate allure-results -c -o allure-report"
+
+      - name: Deploy to GitHub Pages
+        if: always()
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
+          folder: allure-report
