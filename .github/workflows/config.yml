@@ -1,5 +1,5 @@
 name: Autotests
-run-name: Test ${{ github.event.inputs.ENV }} | ${{ github.event.inputs.MARKER }} | ${{ github.event.inputs.THREADS }} threads
+run-name: Test ${{ github.event.inputs.STAGE }} | ${{ github.event.inputs.MARKER }} | ${{ github.event.inputs.THREADS }} threads
 
 on:
   workflow_dispatch:
@@ -7,9 +7,7 @@ on:
       ENV:
         description: 'окружение: dev/DEV'
         required: true
-        type: choice
-        options: [ dev, qa, prod ]
-
+        type: environment
       BROWSER:
         description: 'выберите браузер'
         required: true
@@ -47,14 +45,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Подготовка Allure environment
       - name: Prepare Allure environment
         run: |
           mkdir -p allure-results
           echo "Branch=${{ github.ref_name }}" > allure-results/environment.properties
           echo "Commit=${{ github.sha }}" >> allure-results/environment.properties
           echo "Browser=${{ github.event.inputs.BROWSER }}" >> allure-results/environment.properties
-          echo "Stage=${{ github.event.inputs.ENV }}" >> allure-results/environment.properties
-
+          echo "Stage=${{ github.event.inputs.MARKER }}" >> allure-results/environment.properties
+      # Сборка и запуск тестов через Docker
       - name: Build and run tests
         env:
           BROWSER: ${{ github.event.inputs.BROWSER }}
@@ -73,11 +72,11 @@ jobs:
         if: always()
         run: |
           docker run --rm -v $(pwd):/workspace mcr.microsoft.com/playwright/python:v1.47.0-noble \
-            sh -c "pip install allure-pytest allure-commandline && cd /workspace && allure generate allure-results -c -o allure-report"
+            sh -c "pip install allure-pytest && cd /workspace && allure generate allure-results -c -o allure-report"
 
       - name: Deploy to GitHub Pages
-        if: always()
-        uses: JamesIves/github-pages-deploy-action@v4
+        if: success()
+        uses: JamesIves/github-pages-deploy-action@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: gh-pages
