@@ -16,6 +16,6 @@ COPY . .
 ENV BROWSER=chromium
 ENV MARKER=smoke
 ENV THREADS=1
-
+ENV PYTHONPATH=/usr/workspace
 # Запуск тестов с параметрами
 CMD ["/bin/sh", "-c", "pytest stellarburgerPW/ -v -n $THREADS -m $MARKER --alluredir=allure-results"]
