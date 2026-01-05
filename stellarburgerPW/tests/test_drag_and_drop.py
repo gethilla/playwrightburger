@@ -1,5 +1,5 @@
 from stellarburgerPW.locators.draganddrop_locators import DragLocators as DL
-
+@pytest.mark.smoke
 def test_drag_and_drop(register_page):
     register_page.open()
     register_page.drag_and_drop(DL.C_BURGER, DL.D_BURGER)

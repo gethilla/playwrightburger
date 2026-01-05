@@ -1,6 +1,6 @@
 from stellarburgerPW.tests.conftest import login_page
 
-
+@pytest.mark.api
 def test_login_ui(login_page, auth_api):
     login_page.open()
     login_page.click_on_el('text=Личный кабинет')

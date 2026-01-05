@@ -1,6 +1,7 @@
 from stellarburgerPW.tests.conftest import login_page
 from stellarburgerPW.locators.draganddrop_locators import DragLocators as DL
 
+@pytest.mark.smoke
 def test_login_ui(login_page, auth_api, register_page):
     login_page.open()
     login_page.click_on_el('text=Личный кабинет')

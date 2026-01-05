@@ -14,4 +14,8 @@ ENV BROWSER=chromium
 ENV MARKER=smoke
 ENV THREADS=1
 
-CMD ["/bin/sh", "-c", "pytest tests/ -v -n $$THREADS -m $$MARKER --alluredir=allure-results"]
+ENV BROWSER=chromium
+ENV MARKER=smoke
+ENV THREADS=1
+
+CMD ["/bin/sh", "-c", "pytest tests/ -v -n ${THREADS} -m ${MARKER} --alluredir=allure-results"]
