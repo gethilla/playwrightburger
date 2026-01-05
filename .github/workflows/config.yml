@@ -1,5 +1,5 @@
 name: Autotests
-run-name: Test ${{ github.event.inputs.STAGE }} | ${{ github.event.inputs.MARKER }} | ${{ github.event.inputs.THREADS }} threads
+run-name: Test ${{ github.event.inputs.ENV }} | ${{ github.event.inputs.MARKER }} | ${{ github.event.inputs.THREADS }} threads
 
 on:
   workflow_dispatch:
@@ -7,7 +7,12 @@ on:
       ENV:
         description: 'окружение: dev/DEV'
         required: true
-        type: environment
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - prod
+          - stage
       BROWSER:
         description: 'выберите браузер'
         required: true
