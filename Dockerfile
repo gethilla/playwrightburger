@@ -18,4 +18,8 @@ ENV BROWSER=chromium
 ENV MARKER=smoke
 ENV THREADS=1
 
-CMD ["/bin/sh", "-c", "pytest tests/ -v -n ${THREADS} -m ${MARKER} --alluredir=allure-results"]
+ENV PYTHONPATH=/usr/workspace
+ENV PYTHONPATH="${PYTHONPATH}:/usr/workspace/stellarburgerPW"
+
+CMD ["/bin/sh", "-c", "pytest stellarburgerPW/ -v -n ${THREADS} -m ${MARKER} --alluredir=allure-results"]
+

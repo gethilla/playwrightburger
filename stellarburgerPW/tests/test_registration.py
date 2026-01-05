@@ -1,5 +1,7 @@
+import pytest
 from stellarburgerPW.tests.conftest import register_page
 import time
+
 @pytest.mark.smoke
 def test_register_ui(register_page):
     register_page.open()

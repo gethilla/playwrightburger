@@ -1,3 +1,5 @@
+import pytest
+
 from stellarburgerPW.tests.conftest import login_page
 from stellarburgerPW.locators.draganddrop_locators import DragLocators as DL
 

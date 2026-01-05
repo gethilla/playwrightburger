@@ -1,3 +1,6 @@
+import pytest
+
+
 from stellarburgerPW.locators.draganddrop_locators import DragLocators as DL
 @pytest.mark.smoke
 def test_drag_and_drop(register_page):
