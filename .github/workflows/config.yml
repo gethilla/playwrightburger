@@ -50,19 +50,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Чистим старые папки
       - name: Clean Allure folders
         run: |
           rm -rf allure-results allure-report
           mkdir -p allure-results allure-report
 
-      # Подготовка Allure environment
+      # Подготовка окружения Allure
       - name: Prepare Allure environment
         run: |
-          mkdir -p allure-results
           echo "Branch=${{ github.ref_name }}" > allure-results/environment.properties
           echo "Commit=${{ github.sha }}" >> allure-results/environment.properties
           echo "Browser=${{ github.event.inputs.BROWSER }}" >> allure-results/environment.properties
           echo "Stage=${{ github.event.inputs.MARKER }}" >> allure-results/environment.properties
+
       # Сборка и запуск тестов через Docker
       - name: Build and run tests
         env:
@@ -78,22 +79,24 @@ jobs:
             -v $(pwd)/allure-results:/usr/workspace/allure-results \
             ui-tests:latest
 
+      # Генерация Allure отчёта с правильными правами
       - name: Generate Allure report
         if: always()
         run: |
           mkdir -p allure-report
           docker run --rm \
+            -u $(id -u):$(id -g) \
             -v $(pwd)/allure-results:/app/allure-results \
             -v $(pwd)/allure-report:/app/allure-report \
             frankescobar/allure-docker-service:latest \
             allure generate /app/allure-results -o /app/allure-report --clean
-      
-      
 
+      # Проверка, что отчёт реально сгенерирован
+      - name: Check Allure report content
+        run: ls -la allure-report
+
+      # Деплой на GitHub Pages
       - name: Deploy to GitHub Pages
         if: success()
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: gh-pages
-          folder: allure-report
