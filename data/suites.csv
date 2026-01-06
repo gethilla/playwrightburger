@@ -1,0 +1,5 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","9840","test_login_ui","stellarburgerPW.tests","2026-01-06","passed","2026-01-06","","test_full","",""
+"","5034","test_drag_and_drop","stellarburgerPW.tests","2026-01-06","passed","2026-01-06","","test_drag_and_drop","",""
+"","4084","test_login_ui","stellarburgerPW.tests","2026-01-06","passed","2026-01-06","","test_login","",""
+"","10519","test_register_ui","stellarburgerPW.tests","2026-01-06","passed","2026-01-06","","test_registration","",""
