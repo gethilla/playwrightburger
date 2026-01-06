@@ -1,0 +1,5 @@
+docker images
+
+docker rmi <image id>
+
+docker rm <cont id>
