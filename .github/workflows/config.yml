@@ -73,6 +73,11 @@ jobs:
             -v $(pwd)/allure-results:/usr/workspace/allure-results \
             ui-tests:latest
 
+      - name: Prepare Allure folders
+        run: |
+            mkdir -p allure-results allure-report
+            chmod -R 777 allure-results allure-report
+
       - name: Generate Allure report
         if: always()
         run: |
