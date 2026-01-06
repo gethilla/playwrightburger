@@ -76,8 +76,8 @@ jobs:
       - name: Generate Allure report
         if: always()
         run: |
-          docker run --rm -v $(pwd):/workspace mcr.microsoft.com/playwright/python:v1.47.0-noble \
-            sh -c "allure generate /workspace/allure-results -o /workspace/allure-report --clean"
+          docker run --rm -v $(pwd):/workspace frankescobar/allure-docker-service:latest \
+            allure generate /workspace/allure-results -o /workspace/allure-report --clean
 
       - name: Deploy to GitHub Pages
         if: success()
