@@ -93,6 +93,6 @@ jobs:
         if: success()
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.CI_TOKEN }}
           branch: gh-pages
           folder: allure-report
