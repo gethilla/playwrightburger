@@ -1,5 +1,4 @@
 import allure
-from stellarburgerPW.base.main_page import MainUrl as MU
 from playwright.sync_api import Page
 
 class BasePage:
